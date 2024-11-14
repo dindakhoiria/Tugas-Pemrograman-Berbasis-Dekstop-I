@@ -35,9 +35,28 @@ public class RestaurantApp {
 
     public static void main(String[] args) {
         initMenu();
-        System.out.println("Selamat Datang di Resto Pelipur Lapar");
-        takeOrder();
-        printReceipt();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n=== Selamat Datang di Resto Pelipur Lapar ===");
+            System.out.println("1. Menu Pelanggan");
+            System.out.println("2. Manajemen Menu (Pemilik Restoran)");
+            System.out.println("3. Keluar");
+            System.out.print("Pilih opsi: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                takeOrder();
+                printReceipt();
+            } else if (choice == 2) {
+                manageMenu();
+            } else if (choice == 3) {
+                System.out.println("Terima kasih telah menggunakan aplikasi!");
+                break;
+            } else {
+                System.out.println("Pilihan tidak valid.");
+            }
+        }
     }
 
     public static void initMenu() {
@@ -50,44 +69,116 @@ public class RestaurantApp {
         menu.add(new MenuItem("Es Jeruk", 7000, "Minuman"));
     }
 
-    public static void displayMenuByCategory(String category) {
-        System.out.println("\nPilih Nomor Kategori (1/2), 'Selesai' untuk KELUAR:");
+    public static void manageMenu() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n=== Manajemen Menu ===");
+            System.out.println("1. Tambah Menu Baru");
+            System.out.println("2. Ubah Harga Menu");
+            System.out.println("3. Hapus Menu");
+            System.out.println("4. Kembali ke Menu Utama");
+            System.out.print("Pilih opsi: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                addNewMenuItem();
+            } else if (choice == 2) {
+                updateMenuItemPrice();
+            } else if (choice == 3) {
+                deleteMenuItem();
+            } else if (choice == 4) {
+                break;
+            } else {
+                System.out.println("Pilihan tidak valid.");
+            }
+        }
+    }
+
+    public static void addNewMenuItem() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Nama menu baru: ");
+        String name = scanner.nextLine();
+        System.out.print("Harga: ");
+        double price = scanner.nextDouble();
+        System.out.print("Kategori (Makanan/Minuman): ");
+        scanner.nextLine();  // consume newline
+        String category = scanner.nextLine();
+
+        menu.add(new MenuItem(name, price, category));
+        System.out.println("Menu baru berhasil ditambahkan.");
+    }
+
+    public static void updateMenuItemPrice() {
+        Scanner scanner = new Scanner(System.in);
+        displayMenu();
+        System.out.print("Pilih nomor menu yang ingin diubah harganya: ");
+        int menuNumber = scanner.nextInt();
+
+        if (menuNumber <= 0 || menuNumber > menu.size()) {
+            System.out.println("Nomor menu tidak valid.");
+            return;
+        }
+
+        MenuItem item = menu.get(menuNumber - 1);
+        System.out.print("Harga baru untuk " + item.name + ": ");
+        double newPrice = scanner.nextDouble();
+        System.out.print("Apakah Anda yakin ingin mengubah harga? (Ya/Tidak): ");
+        scanner.nextLine();  // consume newline
+        String confirmation = scanner.nextLine();
+
+        if (confirmation.equalsIgnoreCase("Ya")) {
+            item.price = newPrice;
+            System.out.println("Harga menu berhasil diubah.");
+        } else {
+            System.out.println("Perubahan dibatalkan.");
+        }
+    }
+
+    public static void deleteMenuItem() {
+        Scanner scanner = new Scanner(System.in);
+        displayMenu();
+        System.out.print("Pilih nomor menu yang ingin dihapus: ");
+        int menuNumber = scanner.nextInt();
+
+        if (menuNumber <= 0 || menuNumber > menu.size()) {
+            System.out.println("Nomor menu tidak valid.");
+            return;
+        }
+
+        MenuItem item = menu.get(menuNumber - 1);
+        System.out.print("Apakah Anda yakin ingin menghapus " + item.name + "? (Ya/Tidak): ");
+        scanner.nextLine();  // consume newline
+        String confirmation = scanner.nextLine();
+
+        if (confirmation.equalsIgnoreCase("Ya")) {
+            menu.remove(menuNumber - 1);
+            System.out.println("Menu berhasil dihapus.");
+        } else {
+            System.out.println("Penghapusan dibatalkan.");
+        }
+    }
+
+    public static void displayMenu() {
+        System.out.println("\n=== Daftar Menu ===");
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.get(i);
-            if (item.category.equalsIgnoreCase(category)) {
-                System.out.printf("%d. %s = Rp%.1f%n", i + 1, item.name, item.price);
-            }
+            System.out.printf("%d. %s - Rp%.2f (%s)%n", i + 1, item.name, item.price, item.category);
         }
     }
 
     public static void takeOrder() {
         Scanner scanner = new Scanner(System.in);
-        
+
         while (true) {
-            System.out.println("Pilih Kategori Menu:");
-            System.out.println("1. Makanan");
-            System.out.println("2. Minuman");
-            System.out.print("Pilih Nomor Kategori (1/2), 'Selesai' untuk KELUAR: ");
-            String categoryChoice = scanner.next();
-
-            String category = "";
-            if (categoryChoice.equals("1")) {
-                category = "Makanan";
-            } else if (categoryChoice.equals("2")) {
-                category = "Minuman";
-            } else if (categoryChoice.equalsIgnoreCase("Selesai")) {
-                break;
-            } else {
-                System.out.println("Pilihan tidak valid.");
-                continue;
-            }
-
-            displayMenuByCategory(category);
-
-            System.out.print("Pesan menu dengan memilih nomor pada daftar menu atau 'Selesai' untuk KELUAR: ");
+            displayMenu();
+            System.out.print("Pilih nomor menu atau '0' untuk selesai: ");
             int menuNumber = scanner.nextInt();
-            if (menuNumber <= 0 || menuNumber > menu.size()) {
-                System.out.println("Nomor menu tidak valid atau keluar dari kategori.");
+
+            if (menuNumber == 0) {
+                break;
+            } else if (menuNumber < 0 || menuNumber > menu.size()) {
+                System.out.println("Nomor menu tidak valid.");
                 continue;
             }
 
