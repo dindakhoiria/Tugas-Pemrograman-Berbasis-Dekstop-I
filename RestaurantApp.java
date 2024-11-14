@@ -134,7 +134,6 @@ public class RestaurantApp {
             System.out.println("Perubahan dibatalkan.");
         }
     }
-
     public static void deleteMenuItem() {
         Scanner scanner = new Scanner(System.in);
         displayMenu();
