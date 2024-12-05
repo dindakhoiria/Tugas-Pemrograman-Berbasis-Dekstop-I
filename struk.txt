@@ -1,0 +1,4 @@
+Nasi Goreng,25000.0
+Es Jeruk,6000.0
+Diskon Akhir Tahun,0.0
+Total: 24800.0
